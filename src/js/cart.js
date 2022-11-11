@@ -1,10 +1,5 @@
 
-
-const cardItems = document.querySelector(".cardItems");
-
 const url = "https://fakestoreapi.com/products";
-
-let output = "";
 
 let data = fetch(url)
 
@@ -16,33 +11,8 @@ let data = fetch(url)
       const cardTitle = data[i].title;
       const cardPrice = data[i].price;
       const cardDesc = data[i].description;
-      output += `
-      <div id="card">
-      <img src="${data[i].image}" alt="" id="card-img" />
-      <div>
-        <h1 class="card-title">${data[i].title}</h1>
-      </div>
-
-
-      <div class="card-item-add">
-      <h2 class="card-price">${data[i].price}$</h2>
-        <a class="material-icons md-48 add-cart cart${data[i].id}" id="item-add-icon">add_shopping_cart</a>
-      </div>
-    </div>
-
-    `;
     }
-
-  
-    cardItems.innerHTML = output;
-    let carts = cardItems.querySelectorAll(".add-cart");
-
-    for (let i = 0; i < carts.length; i++) {
-      data[i].inCart = 0;
-      carts[i].addEventListener("click", () => {
-        cartNumbers(data[i]);
-        totalPrice(data[i]);
-      });
+    
 
       function onLoadCartNumber(){
         let productNumbers = localStorage.getItem('cartNumbers');
@@ -105,8 +75,43 @@ let data = fetch(url)
         
       }
 
+      function displayCart(){
+        let cartItems = localStorage.getItem("productsInCart");
+        cartItems = JSON.parse(cartItems);
+        let productContainer = document.querySelector(".products")
+        let cartPrice = localStorage.getItem("totalPrice")
+        if(cartItems && productContainer) {
+            productContainer.innerHTML = '';
+            Object.values(cartItems).map(item => {
+                productContainer.innerHTML += `
+                <div class="product">
+                <span class="material-icons md-48">delete</span>
+                    <img src="${item.image}" alt="">
+                    <span>${item.title}</span>
+                </div>
+                <div class="price">$${item.price}</div>
+                <div class="quantity">
+                    <span class="material-icons md-48">add</span>
+                    <span>${item.inCart}</span>
+                    <span class="material-icons md-48" id="icons-incart">remove</span>
+                </div>
+                <div class="total">$${item.inCart * item.price}</div>
+                `;
+            });
+
+            productContainer.innerHTML += `
+            <div class="cartTotalContainer">
+                <h4 class="cartTotalTitle">Basket Total</h4>
+                <h4 class="basketTotal">$${cartPrice}</h4>
+            </div>
+            
+            `;
+
+        }
+      }
 
       onLoadCartNumber();
-
-    }
+      displayCart();
+    
   });
+
