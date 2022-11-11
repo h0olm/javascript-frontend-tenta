@@ -1,1 +1,1 @@
-Hej
+Simple website with Javascript
